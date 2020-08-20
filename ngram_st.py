@@ -10,7 +10,7 @@ def ngram(word, ddk, subject, period):
         res = nb.unigram(word, ddk = ddk, subject = subject, period = period)
     return res
 
-st.title('N-gram for alltid!')
+st.title('N-gram og trender')
 
 words = st.sidebar.text_input('ord', "")
 if words == "":
