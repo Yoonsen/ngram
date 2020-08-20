@@ -4,10 +4,10 @@ import pandas as pd
 
 def ngram(word, ddk, subject, period):
     if " " in word:
-        bigram = word.split()[:1]
-        res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, subject = subject, period = period)
+        bigram = word.split()[:2]
+        res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, topic = subject, period = period)
     else:
-        res = nb.unigram(word, ddk = ddk, subject = subject, period = period)
+        res = nb.unigram(word, ddk = ddk, topic = subject, period = period)
     return res
 
 st.title('N-gram og trender')
@@ -22,19 +22,24 @@ subject = st.sidebar.text_input('tematisk', '')
 if subject == '':
     subject = None
     
-ddk = st.sidebar.text_input('dewey', "61%")
+ddk = st.sidebar.text_input('dewey', "")
 if ddk == "":
     ddk = None
+    
+if ddk != None and not ddk.endswith("%"):
+    ddk = ddk + "%"
 
 period_slider = st.sidebar.slider(
     'Angi periode',
     1900, 2020, (1950, 2000)
 )
 
-#smooth_slider = st.sidebar.slider('glatting', 0, 8, 1)
+smooth_slider = st.sidebar.slider('glatting', 0, 8, 1)
+
 df = pd.concat([nb.frame(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
-#df = df.rolling(window= smooth_slider).mean()
-#df.columns =  [word]
+
+df = df.rolling(window= smooth_slider).mean()
+
 # Råfrekvenser unigram
 st.line_chart(
     df
