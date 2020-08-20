@@ -15,7 +15,7 @@ if ddk == "":
 
 add_slider = st.sidebar.slider(
     'Angi periode',
-    1500, 2020, (1950, 2000)
+    1900, 2020, (1950, 2000)
 )
 
 #smooth_slider = st.sidebar.slider('glatting', 0, 8, 1)
