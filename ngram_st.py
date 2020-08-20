@@ -2,7 +2,7 @@ import streamlit as st
 import dhlab.nbtext as nb
 import pandas as pd
 
-st.title('N-gram for alle')
+st.title('N-gram for alltid!')
 
 words = st.sidebar.text_input('ord', "")
 if words == "":
@@ -14,7 +14,7 @@ if ddk == "":
     ddk = None
 
 add_slider = st.sidebar.slider(
-    'Select a range of values',
+    'Angi periode',
     1500, 2020, (1950, 2000)
 )
 
