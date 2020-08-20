@@ -32,7 +32,7 @@ period_slider = st.sidebar.slider(
 )
 
 #smooth_slider = st.sidebar.slider('glatting', 0, 8, 1)
-df = pd.concat([nb.frame(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], add_slider[1])), word) for word in allword], axis=1)
+df = pd.concat([nb.frame(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
 #df = df.rolling(window= smooth_slider).mean()
 #df.columns =  [word]
 # Råfrekvenser unigram
