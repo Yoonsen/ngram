@@ -26,6 +26,3 @@ df = pd.concat([nb.frame(nb.unigram(word, ddk = ddk, period = (add_slider[0], ad
 st.line_chart(
     df
 )
-#df.plot(figsize=(5,3),lw=3, alpha = .7)
-#st.pyplot()
-#st.write(nb.bigram('meslinger','og').plot())
