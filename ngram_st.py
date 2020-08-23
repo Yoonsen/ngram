@@ -45,11 +45,6 @@ period_slider = st.sidebar.slider(
 )
 
 
-if sammenlign == "":
-    tot = pd.DataFrame()
-    tot.columns = ["tot"]
-else:
-    tot = sumword(sammenlign, ddk, subject, period=(period_slider[0], period_slider[1]))
 
 smooth_slider = st.sidebar.slider('glatting', 0, 8, 3)
 
@@ -58,8 +53,10 @@ df = pd.concat([nb.frame(ngram(word, ddk = ddk, subject = subject, period = (per
 df = df.rolling(window= smooth_slider).mean()
 
 # Råfrekvenser unigram
-for x in df:
-    df[x] = df[x]/tot
+if sammenlign != "":
+    tot = sumword(sammenlign, ddk, subject, period=(period_slider[0], period_slider[1]))
+    for x in df:
+        df[x] = df[x]/tot
 
 st.line_chart(df)
 
