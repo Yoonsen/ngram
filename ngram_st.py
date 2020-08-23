@@ -18,26 +18,29 @@ def sumword(words, ddk, topic, period):
     ref.columns = ["tot"]
     return ref
 
-st.title('Bruksutvikling ord og bigram')
+st.title('Ord og bigram')
 
-words = st.sidebar.text_input('ord', "")
+words = st.sidebar.text_input('Fyll inn ord og bigram adskilt med komma', "")
 if words == "":
     words = "det"
 
-sammenlign = st.sidebar.text_input("sammenling med summen av følgende ord", ".")
+sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord", ".")
  
 allword = [w.strip() for w in words.split(',')]
 
-subject = st.sidebar.text_input('tematisk', '')
+    
+ddk = st.sidebar.text_input('Dewey desimalkode', "")
+if ddk == "":
+    ddk = None
+
+if ddk != None and not ddk.endswith("%"):
+    ddk = ddk + "%"
+
+
+subject = st.sidebar.text_input('Temaord fra metadata', '')
 if subject == '':
     subject = None
     
-ddk = st.sidebar.text_input('dewey', "")
-if ddk == "":
-    ddk = None
-    
-if ddk != None and not ddk.endswith("%"):
-    ddk = ddk + "%"
 
 period_slider = st.sidebar.slider(
     'Angi periode',
@@ -46,7 +49,7 @@ period_slider = st.sidebar.slider(
 
 
 
-smooth_slider = st.sidebar.slider('glatting', 0, 8, 3)
+smooth_slider = st.sidebar.slider('Glatting', 0, 8, 3)
 
 df = pd.concat([nb.frame(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
 
