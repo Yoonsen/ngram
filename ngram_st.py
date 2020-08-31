@@ -60,7 +60,8 @@ if sammenlign != "":
     tot = sumword(sammenlign, ddk, subject, period=(period_slider[0], period_slider[1]))
     for x in df:
         df[x] = df[x]/tot
-
+        
+df.index = pd.to_datetime(df.index, format='%Y')
 st.line_chart(df)
 
 #st.line_chart(tot)
