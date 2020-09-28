@@ -1,6 +1,7 @@
 import streamlit as st
 import dhlab.nbtext as nb
 import pandas as pd
+from PIL import Image
 
 @st.cache(suppress_st_warning=True)
 def ngram(word, ddk, subject, period):
@@ -18,6 +19,10 @@ def sumword(words, ddk, topic, period):
     ref.columns = ["tot"]
     return ref
 
+
+
+image = Image.open('NB-logo-no-eng-svart.png')
+st.image(image, width = 200)
 st.title('Ord og bigram')
 
 words = st.sidebar.text_input('Fyll inn ord og bigram adskilt med komma', "")
