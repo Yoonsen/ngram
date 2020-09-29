@@ -3,7 +3,7 @@ import dhlab.nbtext as nb
 import pandas as pd
 from PIL import Image
 
-@st.cache(suppress_st_warning=True)
+@st.cache(suppress_st_warning=True, show_spinner = False)
 def ngram(word, ddk, subject, period):
     if " " in word:
         bigram = word.split()[:2]
@@ -12,7 +12,7 @@ def ngram(word, ddk, subject, period):
         res = nb.unigram(word, ddk = ddk, topic = subject, period = period)
     return res
 
-@st.cache(suppress_st_warning=True)
+@st.cache(suppress_st_warning=True, show_spinner = False)
 def sumword(words, ddk, topic, period):
     wordlist =   [x.strip() for x in words.split(',')]
     ref = pd.concat([nb.unigram(w, ddk = ddk, topic = topic, period = period) for w in wordlist], axis = 1).sum(axis = 1)
