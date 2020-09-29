@@ -58,14 +58,15 @@ smooth_slider = st.sidebar.slider('Glatting', 0, 8, 3)
 
 df = pd.concat([nb.frame(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
 
-df = df.rolling(window= smooth_slider).mean()
+
 
 # Råfrekvenser unigram
 if sammenlign != "":
     tot = sumword(sammenlign, ddk, subject, period=(period_slider[0], period_slider[1]))
     for x in df:
         df[x] = df[x]/tot
-        
+
+df = df.rolling(window= smooth_slider).mean()
 df.index = pd.to_datetime(df.index, format='%Y')
 st.line_chart(df)
 
