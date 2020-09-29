@@ -15,6 +15,9 @@ def ngram(word, ddk, subject, period):
 @st.cache(suppress_st_warning=True, show_spinner = False)
 def sumword(words, ddk, topic, period):
     wordlist =   [x.strip() for x in words.split(',')]
+    # check if trailing comma, or comma in succession, if so count comma in
+    if '' in wordlist:
+        wordlist = [','] + [y for y in wordlist if y != '']
     ref = pd.concat([nb.unigram(w, ddk = ddk, topic = topic, period = period) for w in wordlist], axis = 1).sum(axis = 1)
     ref.columns = ["tot"]
     return ref
@@ -32,7 +35,6 @@ if words == "":
 sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord", ".")
  
 allword = [w.strip() for w in words.split(',')]
-
     
 ddk = st.sidebar.text_input('Dewey desimalkode', "")
 if ddk == "":
