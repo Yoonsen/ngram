@@ -25,13 +25,12 @@ def sumword(words, ddk, topic, period):
 
 
 image = Image.open('NB-logo-no-eng-svart.png')
-st.image(image, width = 200)
-st.title('Ord og bigram')
-
-
+st.sidebar.image(image, width = 200)
+st.sidebar.title('Ord og bigram')
+st.markdown('### Trendlinjer')
 
 st.sidebar.header('Input')
-words = st.sidebar.text_input('Fyll inn ord og bigram adskilt med komma. Det skilles mellom store og små bokstaver', "")
+words = st.sidebar.text_input('Fyll inn ord eller bigram adskilt med komma. Det skilles mellom store og små bokstaver', "")
 if words == "":
     words = "det"
 
@@ -59,11 +58,17 @@ period_slider = st.sidebar.slider(
     1900, 2020, (1950, 2000)
 )
 
+def frm(x, y):
+    if not x.empty:
+        res = nb.frame(x, y)
+    else:
+        res = x
+    return res
 
 st.sidebar.header('Visning')
 smooth_slider = st.sidebar.slider('Glatting', 0, 8, 3)
 
-df = pd.concat([nb.frame(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
+df = pd.concat([frm(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
 
 
 
