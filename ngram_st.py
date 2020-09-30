@@ -28,23 +28,27 @@ image = Image.open('NB-logo-no-eng-svart.png')
 st.image(image, width = 200)
 st.title('Ord og bigram')
 
-words = st.sidebar.text_input('Fyll inn ord og bigram adskilt med komma', "")
+
+
+st.sidebar.header('Input')
+words = st.sidebar.text_input('Fyll inn ord og bigram adskilt med komma. Det skilles mellom store og små bokstaver', "")
 if words == "":
     words = "det"
 
-sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord", ".")
+sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord - sum av komma og punktum er standard, som gir tilnærmet 10nde-del av inputordenes relativfrekvens", ".,")
  
 allword = [w.strip() for w in words.split(',')]
-    
-ddk = st.sidebar.text_input('Dewey desimalkode', "")
+
+st.sidebar.header('Parametre fra metadata')
+st.sidebar.markdown("Se definisjoner av Deweys desimalkode [her](https://deweysearchno.pansoft.de/webdeweysearch/index.html)")
+ddk = st.sidebar.text_input('Dewey desimalkode - skriv bare de første sifrene for eksempel 8 for alle nummer som starter med 8 som gir treff på all kodet skjønnlitteratur, se lenke til webdewey ovenfor for mulige desimalkoder', "")
 if ddk == "":
     ddk = None
 
 if ddk != None and not ddk.endswith("%"):
     ddk = ddk + "%"
 
-
-subject = st.sidebar.text_input('Temaord fra metadata', '')
+subject = st.sidebar.text_input('Temaord fra Nasjonalbibliografien - Marc21 felt 655 (stor forbokstav) eller felt 653 (liten forbokstav) - merk forskjell på urfolk og Urfolk', '')
 if subject == '':
     subject = None
     
@@ -55,7 +59,7 @@ period_slider = st.sidebar.slider(
 )
 
 
-
+st.sidebar.header('Visning')
 smooth_slider = st.sidebar.slider('Glatting', 0, 8, 3)
 
 df = pd.concat([nb.frame(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
