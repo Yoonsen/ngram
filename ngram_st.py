@@ -40,6 +40,7 @@ sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord - sum
 allword = [w.strip() for w in words.split(',')]
 
 st.sidebar.header('Parametre fra metadata')
+st.sidebar.subheader('Dewey')
 st.sidebar.markdown("Se definisjoner av Deweys desimalkode [her](https://deweysearchno.pansoft.de/webdeweysearch/index.html)")
 ddk = st.sidebar.text_input('Dewey desimalkode - skriv bare de første sifrene for eksempel 8 for alle nummer som starter med 8 som gir treff på all kodet skjønnlitteratur, se lenke til webdewey ovenfor for mulige desimalkoder', "")
 if ddk == "":
@@ -47,14 +48,14 @@ if ddk == "":
 
 if ddk != None and not ddk.endswith("%"):
     ddk = ddk + "%"
-
+st.sidebar.subheader('Temaord')
 subject = st.sidebar.text_input('Temaord fra Nasjonalbibliografien - Marc21 felt 655 (stor forbokstav) eller felt 653 (liten forbokstav) - merk forskjell på urfolk og Urfolk', '')
 if subject == '':
     subject = None
     
-
+st.sidebar.subheader('Tidsperiode')
 period_slider = st.sidebar.slider(
-    'Angi periode',
+    'Angi periode - periode mellom 1900 og 2014',
     1900, 2020, (1950, 2000)
 )
 
