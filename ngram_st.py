@@ -27,6 +27,9 @@ def sumword(words, ddk, topic, period):
 image = Image.open('NB-logo-no-eng-svart.png')
 st.sidebar.image(image, width = 200)
 st.sidebar.title('Ord og bigram')
+
+st.sidebar.markdown('Se mer om å drive analytisk DH på [DHLAB-siden](https://nbviewer.jupyter.org/github/DH-LAB-NB/DHLAB/blob/master/DHLAB_ved_Nasjonalbiblioteket.ipynb), og korpusanalyse via web [her](https://beta.nb.no/korpus/)')
+
 st.markdown('### Trendlinjer')
 
 st.sidebar.header('Input')
