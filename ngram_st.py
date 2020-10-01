@@ -36,7 +36,7 @@ if words == "":
 
 sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord - sum av komma og punktum er standard, som gir tilnærmet 10nde-del av inputordenes relativfrekvens", ".,")
  
-allword = [w.strip() for w in words.split(',')]
+allword = [w.strip() for w in words.split(',')][:30]
 
 st.sidebar.header('Parametre fra metadata')
 st.sidebar.subheader('Dewey')
@@ -58,6 +58,7 @@ period_slider = st.sidebar.slider(
     1900, 2020, (1950, 2000)
 )
 
+# wrapper for nb.frame() check if dataframe is empty before assigning names to columns
 def frm(x, y):
     if not x.empty:
         res = nb.frame(x, y)
