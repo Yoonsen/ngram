@@ -58,7 +58,7 @@ if subject == '':
     
 st.sidebar.subheader('Tidsperiode')
 period_slider = st.sidebar.slider(
-    'Angi periode - periode mellom 1900 og 2014',
+    'Angi periode - år mellom 1900 og 2014',
     1900, 2020, (1950, 2000)
 )
 
