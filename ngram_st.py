@@ -40,12 +40,12 @@ if words == "":
 
 sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord - sum av komma og punktum er standard, som gir tilnærmet 10nde-del av inputordenes relativfrekvens", ".,")
  
-allword = [w.strip() for w in words.split(',')][:30]
+allword = list(set([w.strip() for w in words.split(',')]))[:30]
 
 st.sidebar.header('Parametre fra metadata')
 st.sidebar.subheader('Dewey')
-st.sidebar.markdown("Se definisjoner av Deweys desimalkode [her](https://deweysearchno.pansoft.de/webdeweysearch/index.html)")
-ddk = st.sidebar.text_input('Dewey desimalkode - skriv bare de første sifrene for eksempel 8 for alle nummer som starter med 8 som gir treff på all kodet skjønnlitteratur, se lenke til webdewey ovenfor for mulige desimalkoder', "")
+st.sidebar.markdown("Se definisjoner av [Deweys desimalkoder](https://deweysearchno.pansoft.de/webdeweysearch/index.html).")
+ddk = st.sidebar.text_input('Skriv bare de første sifrene, for eksempel 8 for alle nummer som starter med 8, som gir treff på all kodet skjønnlitteratur.', "")
 if ddk == "":
     ddk = None
 
@@ -59,7 +59,7 @@ if subject == '':
 st.sidebar.subheader('Tidsperiode')
 period_slider = st.sidebar.slider(
     'Angi periode - år mellom 1900 og 2014',
-    1900, 2020, (1950, 2000)
+    1900, 2020, (1950, 2010)
 )
 
 # wrapper for nb.frame() check if dataframe is empty before assigning names to columns
@@ -71,7 +71,7 @@ def frm(x, y):
     return res
 
 st.sidebar.header('Visning')
-smooth_slider = st.sidebar.slider('Glatting', 0, 8, 3)
+smooth_slider = st.sidebar.slider('Glatting', 1, 8, 3)
 
 df = pd.concat([frm(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
 
@@ -85,6 +85,18 @@ if sammenlign != "":
 
 df = df.rolling(window= smooth_slider).mean()
 df.index = pd.to_datetime(df.index, format='%Y')
-st.line_chart(df)
+
+ax = df.plot(figsize = (10,6 ), lw = 5, alpha=0.8)
+ax.spines["top"].set_visible(False)
+ax.spines["right"].set_visible(False)
+
+ax.spines["bottom"].set_color("grey")
+ax.spines["left"].set_color("grey")
+ax.spines["bottom"].set_linewidth(3)
+ax.spines["left"].set_linewidth(3)
+#ax.legend(loc='upper left', frameon=False)
+#ax.spines["left"].set_visible(False)
+st.pyplot()
+#st.line_chart(df)
 
 #st.line_chart(tot)
