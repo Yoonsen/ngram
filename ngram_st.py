@@ -100,3 +100,15 @@ df.index = pd.to_datetime(df.index, format='%Y')
 st.line_chart(df)
 
 #st.line_chart(tot)
+
+if st.button('Sjekk fordeling i bøker'):
+    antall = st.number_input( 'Antall bøker - jo fler jo lenger ventetid, forskjellige søk vil vanligvis gi nye bøker (trykk på +/- for starte nye søk', 10)    
+    wordlist = allword
+    urns = {w:nb.book_urn(words=[w], ddk = ddk, period = (period_slider[0], period_slider[1]), limit = antall) for w in wordlist}
+    data = {w: nb.aggregate_urns(urns[w]) for w in wordlist}
+
+    df = pd.concat([nb.frame(data[w], 'bøker ' + w) for w in wordlist], axis = 1)
+
+    st.markdown("### Bøker som inneholder en av _{ws}_ i kolonnene, ordfrekvens i radene".format(ws = ', '.join(wordlist)))
+    st.write('En diagonal indikerer at ordene gjensidig utelukker hverandre')
+    st.write(df.loc[wordlist].fillna(0))
