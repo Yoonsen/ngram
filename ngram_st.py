@@ -75,7 +75,8 @@ smooth_slider = st.sidebar.slider('Glatting', 1, 8, 3)
 
 st.sidebar.header('Fordeling i bøker')
 #antall = st.sidebar.number_input( "For sjekking av fordeling i bøker - jo fler jo lenger ventetid, forskjellige søk vil vanligvis gi nye bøker", 10)
-antall = st.sidebar.slider("For sjekking av fordeling i bøker - sett verdien til større enn null for å sjekke", 0, 10, 0)
+st.sidebar.write("For sjekking av fordeling i bøker - sett verdien til større enn null for å sjekke")
+antall = st.sidebar.number_input("Antall bøker", 0, 10, 0)
 
 df = pd.concat([frm(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
 
