@@ -74,7 +74,8 @@ st.sidebar.header('Visning')
 smooth_slider = st.sidebar.slider('Glatting', 1, 8, 3)
 
 st.sidebar.header('Fordeling i bøker')
-antall = st.sidebar.number_input( "For sjekking av fordeling i bøker - jo fler jo lenger ventetid, forskjellige søk vil vanligvis gi nye bøker", 10)
+#antall = st.sidebar.number_input( "For sjekking av fordeling i bøker - jo fler jo lenger ventetid, forskjellige søk vil vanligvis gi nye bøker", 10)
+antall = st.sidebar.slider("For sjekking av fordeling i bøker - sett verdien til større enn null for å sjekke", 0, 10, 0)
 
 df = pd.concat([frm(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
 
@@ -105,7 +106,8 @@ st.line_chart(df)
 #st.line_chart(tot)
 
 
-if st.button('Sjekk fordeling i bøker'):
+#if st.button('Sjekk fordeling i bøker'):
+if antall > 0:
     wordlist = allword
     urns = {w:nb.book_urn(words=[w], ddk = ddk, period = (period_slider[0], period_slider[1]), limit = antall) for w in wordlist}
     data = {w: nb.aggregate_urns(urns[w]) for w in wordlist}
