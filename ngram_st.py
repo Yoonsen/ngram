@@ -123,6 +123,6 @@ if antall > 0:
     
     st.write('En diagonal indikerer at ordene gjensidig utelukker hverandre')
     
-    st.write(nb.frame(data).transpose())
+    st.write(nb.frame(data).transpose().fillna(0))
 
     #st.write(df.loc[wordlist].fillna(0))
