@@ -76,7 +76,7 @@ smooth_slider = st.sidebar.slider('Glatting', 1, 8, 3)
 st.sidebar.header('Fordeling i bøker')
 #antall = st.sidebar.number_input( "For sjekking av fordeling i bøker - jo fler jo lenger ventetid, forskjellige søk vil vanligvis gi nye bøker", 10)
 st.sidebar.markdown("For sjekking av fordeling i bøker - sett verdien til større enn null for å sjekke")
-antall = st.sidebar.number_input("Antall bøker", 0, 10, 0)
+antall = st.sidebar.number_input("Antall bøker", 0, 100, 0)
 
 df = pd.concat([frm(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
 
@@ -109,12 +109,20 @@ st.line_chart(df)
 
 #if st.button('Sjekk fordeling i bøker'):
 if antall > 0:
+    
     wordlist = allword
+    
     urns = {w:nb.book_urn(words=[w], ddk = ddk, period = (period_slider[0], period_slider[1]), limit = antall) for w in wordlist}
-    data = {w: nb.aggregate_urns(urns[w]) for w in wordlist}
-
-    df = pd.concat([nb.frame(data[w], 'bøker ' + w) for w in wordlist], axis = 1)
+    #data = {w: nb.aggregate_urns(urns[w]) for w in wordlist}
+    #st.write([(w,urns[w]) for w in wordlist])
+    urner = lambda w: [x[0] for x in urns[w]]
+    #st.write(urner(wordlist[0]))
+    data = {'bok ' + w:nb.word_freq(urner(w), wordlist) for w in wordlist}
 
     st.markdown("### Bøker som inneholder en av _{ws}_ i kolonnene, ordfrekvens i radene".format(ws = ', '.join(wordlist)))
+    
     st.write('En diagonal indikerer at ordene gjensidig utelukker hverandre')
-    st.write(df.loc[wordlist].fillna(0))
+    
+    st.write(nb.frame(data).transpose())
+
+    #st.write(df.loc[wordlist].fillna(0))
