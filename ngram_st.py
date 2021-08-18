@@ -1,5 +1,6 @@
 import streamlit as st
 import dhlab.nbtext as nb
+import dhlab_v2 as d2
 import pandas as pd
 from PIL import Image
 
@@ -9,7 +10,7 @@ def ngram(word, ddk, subject, period):
         bigram = word.split()[:2]
         res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, topic = subject, period = period)
     else:
-        res = nb.unigram(word, ddk = ddk, topic = subject, period = period)
+        res = d2.ngram_book(word, ddk = ddk, topic = subject, period = period)
     return res
 
 @st.cache(suppress_st_warning=True, show_spinner = False)
@@ -18,7 +19,7 @@ def sumword(words, ddk, topic, period):
     # check if trailing comma, or comma in succession, if so count comma in
     if '' in wordlist:
         wordlist = [','] + [y for y in wordlist if y != '']
-    ref = pd.concat([nb.unigram(w, ddk = ddk, topic = topic, period = period) for w in wordlist], axis = 1).sum(axis = 1)
+    ref = pd.concat([d2.ngram_book(w, ddk = ddk, topic = topic, period = period) for w in wordlist], axis = 1).sum(axis = 1)
     ref.columns = ["tot"]
     return ref
 
