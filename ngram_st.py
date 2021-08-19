@@ -1,14 +1,15 @@
 import streamlit as st
-import dhlab.nbtext as nb
 import dhlab_v2 as d2
 import pandas as pd
 from PIL import Image
 
 @st.cache(suppress_st_warning=True, show_spinner = False)
 def ngram(word, ddk, subject, period):
+    res = pd.DataFrame()
     if " " in word:
         bigram = word.split()[:2]
-        res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, topic = subject, period = period)
+        print('bigram i kjømda')
+        #res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, topic = subject, period = period)
     else:
         res = d2.ngram_book(word, ddk = ddk, topic = subject, period = period)
     return res
@@ -66,7 +67,7 @@ period_slider = st.sidebar.slider(
 # wrapper for nb.frame() check if dataframe is empty before assigning names to columns
 def frm(x, y):
     if not x.empty:
-        res = nb.frame(x, y)
+        res = pd.DataFrame(x, columns = [y])
     else:
         res = x
     return res
