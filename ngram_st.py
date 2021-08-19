@@ -3,6 +3,18 @@ import dhlab_v2 as d2
 import pandas as pd
 from PIL import Image
 
+
+@st.cache(suppress_st_warning=True, show_spinner = False)
+def sumword(words, ddk, topic, period):
+    wordlist =   [x.strip() for x in words.split(',')]
+    # check if trailing comma, or comma in succession, if so count comma in
+    if '' in wordlist:
+        wordlist = [','] + [y for y in wordlist if y != '']
+    ref = d2.ngram_book(wordlist, ddk = ddk, topic = topic, period = period).sum(axis = 1)
+    ref.columns = 'tot'
+    return ref
+
+
 @st.cache(suppress_st_warning=True, show_spinner = False)
 def ngram(word, ddk, subject, period):
     res = pd.DataFrame()
@@ -12,17 +24,14 @@ def ngram(word, ddk, subject, period):
         #res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, topic = subject, period = period)
     else:
         res = d2.ngram_book(word, ddk = ddk, topic = subject, period = period)
+    if sammenlign != "":
+        tot = sumword(sammenlign, ddk, subject, period=(period_slider[0], period_slider[1]))
+        for x in res:
+            res[x] = res[x]/tot
+    
+    res = res.rolling(window= smooth_slider).mean()
+    res.index = pd.to_datetime(res.index, format='%Y')
     return res
-
-@st.cache(suppress_st_warning=True, show_spinner = False)
-def sumword(words, ddk, topic, period):
-    wordlist =   [x.strip() for x in words.split(',')]
-    # check if trailing comma, or comma in succession, if so count comma in
-    if '' in wordlist:
-        wordlist = [','] + [y for y in wordlist if y != '']
-    ref = pd.concat([d2.ngram_book(w, ddk = ddk, topic = topic, period = period) for w in wordlist], axis = 1).sum(axis = 1)
-    ref.columns = ["tot"]
-    return ref
 
 
 
@@ -47,18 +56,27 @@ allword = list(set([w.strip() for w in words.split(',')]))[:30]
 st.sidebar.header('Parametre fra metadata')
 st.sidebar.subheader('Dewey')
 st.sidebar.markdown("Se definisjoner av [Deweys desimalkoder](https://deweysearchno.pansoft.de/webdeweysearch/index.html).")
+
+
 ddk = st.sidebar.text_input('Skriv bare de første sifrene, for eksempel 8 for alle nummer som starter med 8, som gir treff på all kodet skjønnlitteratur.', "")
+
 if ddk == "":
     ddk = None
 
 if ddk != None and not ddk.endswith("%"):
     ddk = ddk + "%"
+
+
 st.sidebar.subheader('Temaord')
-subject = st.sidebar.text_input('Temaord fra Nasjonalbibliografien - Marc21 felt 655 (stor forbokstav) eller felt 653 (liten forbokstav) - merk forskjell på urfolk og Urfolk', '')
+
+subject = st.sidebar.text_input('Temaord fra Nasjonalbibliografien - Marc21 felt 653', '')
 if subject == '':
     subject = None
-    
+elif not "%" in subject:
+    subject = "%" + subject.strip() + "%"
+                                       
 st.sidebar.subheader('Tidsperiode')
+
 period_slider = st.sidebar.slider(
     'Angi periode - år mellom 1900 og 2014',
     1900, 2020, (1950, 2010)
@@ -80,18 +98,8 @@ st.sidebar.header('Fordeling i bøker')
 st.sidebar.markdown("For sjekking av fordeling i bøker - sett verdien til større enn null for å sjekke")
 antall = st.sidebar.number_input("Antall bøker", 0, 100, 0)
 
-df = pd.concat([frm(ngram(word, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1])), word) for word in allword], axis=1)
+df = ngram(allword, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1]))
 
-
-
-# Råfrekvenser unigram
-if sammenlign != "":
-    tot = sumword(sammenlign, ddk, subject, period=(period_slider[0], period_slider[1]))
-    for x in df:
-        df[x] = df[x]/tot
-
-df = df.rolling(window= smooth_slider).mean()
-df.index = pd.to_datetime(df.index, format='%Y')
 
 #ax = df.plot(figsize = (10,6 ), lw = 5, alpha=0.8)
 #ax.spines["top"].set_visible(False)
