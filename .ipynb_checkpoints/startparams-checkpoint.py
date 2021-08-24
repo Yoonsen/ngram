@@ -1,0 +1,3 @@
+# variable
+
+i = 0
