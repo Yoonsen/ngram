@@ -48,7 +48,7 @@ st.markdown('### Trendlinjer')
 st.sidebar.header('Input')
 words = st.text_input('Fyll inn ord eller bigram adskilt med komma. Det skilles mellom store og små bokstaver', "")
 if words == "":
-    words = "det"
+    words = "helse, sykdom, virus"
 
 sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord - sum av komma og punktum er standard, som gir tilnærmet 10nde-del av inputordenes relativfrekvens", ".,")
  
