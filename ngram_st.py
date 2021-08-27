@@ -40,7 +40,8 @@ st.image(image, width = 200)
 st.markdown('Se mer om å drive analytisk DH på [DHLAB-siden](https://nbviewer.jupyter.org/github/DH-LAB-NB/DHLAB/blob/master/DHLAB_ved_Nasjonalbiblioteket.ipynb), og korpusanalyse via web [her](https://beta.nb.no/korpus/)')
 
 
-st.title('Ord (og bigram ... bare enkeltord for øyeblikket)')
+st.title('Ord og bigram')
+st.markdown('### bare enkeltord for øyeblikket')
 
 st.markdown('### Trendlinjer')
 
