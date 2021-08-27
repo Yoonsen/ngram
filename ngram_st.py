@@ -135,6 +135,6 @@ st.markdown("## Konkordanser for __{u}__".format(u = ", ".join(allword)))
 try:
     samples = list(d2.document_corpus(doctype = doctype,  subject = subject_ft, ddk = ddk_ft, from_year = period_slider[0], to_year = period_slider[1], limit = 2000).urn)
     #st.write(samples[:10])
-    st.write('\n\n'.join([':'.join(str(x) for x in r[1]) for r in d2.concordance(urns = samples, words =" ".join(allword))[['docid','conc']][:60].iterrows()]).replace('<b>','**').replace('</b>', '**'))
+    st.write('\n\n'.join([' '.join(("https://urn.nb.no/" + r[1][0], r[1][1])) for r in d2.concordance(urns = samples, words =" ".join(allword))[['urn','conc']][:60].iterrows()]).replace('<b>','**').replace('</b>', '**'))
 except :
     st.write('... ingen konkordanser ...')
