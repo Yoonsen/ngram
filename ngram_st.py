@@ -69,10 +69,11 @@ st.sidebar.markdown("Se definisjoner av [Deweys desimalkoder](https://deweysearc
 
 ddki = st.sidebar.text_input('Skriv bare de første sifrene, for eksempel 8 for alle nummer som starter med 8, som gir treff på all kodet skjønnlitteratur.', "")
 
-ddk_ft = ddki
+ddk_ft = None
+ddk = None
 
 if ddki == "":
-    ddk = None
+    ddki = None
 
 if ddki != None and not ddki.endswith("%"):
     ddk = ddki + "%"
