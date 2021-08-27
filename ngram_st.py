@@ -130,7 +130,7 @@ df = ngram(NGRAM, allword, ddk = ddk, subject = subject, period = (period_slider
 st.line_chart(df)
 
 #st.line_chart(tot)
-st.markdown("## Konkordanser for {u}".format(u = ", ".join(allword)))
+st.markdown("## Konkordanser for __{u}__".format(u = ", ".join(allword)))
 #st.write(subject_ft, ddk_ft, doctype, period_slider, " ".join(allword))
 try:
     samples = list(d2.document_corpus(doctype = doctype,  subject = subject_ft, ddk = ddk_ft, from_year = period_slider[0], to_year = period_slider[1], limit = 2000).urn)
