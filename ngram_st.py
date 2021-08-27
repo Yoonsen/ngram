@@ -80,13 +80,14 @@ if ddki != None and not ddki.endswith("%"):
 
 st.sidebar.subheader('Temaord')
 
+
+subject_ft = None
 subject = st.sidebar.text_input('Temaord fra Nasjonalbibliografien - Marc21 felt 653', '')
 if subject == '':
     subject = None
 elif not "%" in subject:
     subject = "%" + subject.strip() + "%"
-
-subject_ft = subject.replace('%', '')
+    subject_ft = subject.replace('%', '')
 
 st.sidebar.subheader('Tidsperiode')
 
