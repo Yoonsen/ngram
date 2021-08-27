@@ -18,12 +18,12 @@ def sumword(NGRAM, words, ddk, topic, period):
 @st.cache(suppress_st_warning=True, show_spinner = False)
 def ngram(NGRAM, word, ddk, subject, period):
     res = pd.DataFrame()
-    if " " in word:
-        bigram = word.split()[:2]
-        print('bigram i kjømda')
-        #res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, topic = subject, period = period)
-    else:
-        res = NGRAM(word, ddk = ddk, topic = subject, period = period)
+    #if " " in word:
+    #    bigram = word.split()[:2]
+    #    print('bigram i kjømda')
+    #    #res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, topic = subject, period = period)
+    #else:
+    res = NGRAM(word, ddk = ddk, topic = subject, period = period)
     if sammenlign != "":
         tot = sumword(NGRAM, sammenlign, ddk, subject, period=(period_slider[0], period_slider[1]))
         for x in res:
@@ -58,21 +58,25 @@ texts = st.sidebar.selectbox('Bok eller tidsskrift', ['bok', 'tidsskrift'], inde
 
 if texts == "bok":
     NGRAM = d2.ngram_book
+    doctype = "digibok"
 else:
     NGRAM = d2.ngram_periodicals
+    doctype = "digitidsskrift"
     
 st.sidebar.subheader('Dewey')
 st.sidebar.markdown("Se definisjoner av [Deweys desimalkoder](https://deweysearchno.pansoft.de/webdeweysearch/index.html).")
 
 
-ddk = st.sidebar.text_input('Skriv bare de første sifrene, for eksempel 8 for alle nummer som starter med 8, som gir treff på all kodet skjønnlitteratur.', "")
+ddki = st.sidebar.text_input('Skriv bare de første sifrene, for eksempel 8 for alle nummer som starter med 8, som gir treff på all kodet skjønnlitteratur.', "")
 
-if ddk == "":
+ddk_ft = ddki
+
+if ddki == "":
     ddk = None
 
-if ddk != None and not ddk.endswith("%"):
-    ddk = ddk + "%"
-
+if ddki != None and not ddki.endswith("%"):
+    ddk = ddki + "%"
+    ddk_ft = (ddki + "*").replace('.', '"."')
 
 st.sidebar.subheader('Temaord')
 
@@ -81,7 +85,9 @@ if subject == '':
     subject = None
 elif not "%" in subject:
     subject = "%" + subject.strip() + "%"
-                                       
+
+subject_ft = subject.replace('%', '')
+
 st.sidebar.subheader('Tidsperiode')
 
 period_slider = st.sidebar.slider(
@@ -122,24 +128,11 @@ df = ngram(NGRAM, allword, ddk = ddk, subject = subject, period = (period_slider
 st.line_chart(df)
 
 #st.line_chart(tot)
-
-
-#if st.button('Sjekk fordeling i bøker'):
-if antall > 0:
-    
-    wordlist = allword
-    
-    urns = {w:nb.book_urn(words=[w], ddk = ddk, period = (period_slider[0], period_slider[1]), limit = antall) for w in wordlist}
-    #data = {w: nb.aggregate_urns(urns[w]) for w in wordlist}
-    #st.write([(w,urns[w]) for w in wordlist])
-    urner = lambda w: [x[0] for x in urns[w]]
-    #st.write(urner(wordlist[0]))
-    data = {'bok ' + w:nb.word_freq(urner(w), wordlist) for w in wordlist}
-
-    st.markdown("### Bøker som inneholder en av _{ws}_ i kolonnene, ordfrekvens i radene".format(ws = ', '.join(wordlist)))
-    
-    st.write('En diagonal indikerer at ordene gjensidig utelukker hverandre')
-    
-    st.write(nb.frame(data).transpose().fillna(0))
-
-    #st.write(df.loc[wordlist].fillna(0))
+st.markdown("## Konkordanser for {u}".format(u = ", ".join(allword)))
+#st.write(subject_ft, ddk_ft, doctype, period_slider, " ".join(allword))
+try:
+    samples = list(d2.document_corpus(doctype = doctype,  subject = subject_ft, ddk = ddk_ft, from_year = period_slider[0], to_year = period_slider[1], limit = 2000).urn)
+    #st.write(samples[:10])
+    st.write('\n\n'.join([':'.join(str(x) for x in r[1]) for r in d2.concordance(urns = samples, words =" ".join(allword))[['docid','conc']][:60].iterrows()]).replace('<b>','**').replace('</b>', '**'))
+except :
+    st.write('... ingen konkordanser ...')
