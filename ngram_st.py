@@ -5,27 +5,27 @@ from PIL import Image
 
 
 @st.cache(suppress_st_warning=True, show_spinner = False)
-def sumword(words, ddk, topic, period):
+def sumword(NGRAM, words, ddk, topic, period):
     wordlist =   [x.strip() for x in words.split(',')]
     # check if trailing comma, or comma in succession, if so count comma in
     if '' in wordlist:
         wordlist = [','] + [y for y in wordlist if y != '']
-    ref = d2.ngram_book(wordlist, ddk = ddk, topic = topic, period = period).sum(axis = 1)
+    ref = NGRAM(wordlist, ddk = ddk, topic = topic, period = period).sum(axis = 1)
     ref.columns = 'tot'
     return ref
 
 
 @st.cache(suppress_st_warning=True, show_spinner = False)
-def ngram(word, ddk, subject, period):
+def ngram(NGRAM, word, ddk, subject, period):
     res = pd.DataFrame()
     if " " in word:
         bigram = word.split()[:2]
         print('bigram i kjømda')
         #res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, topic = subject, period = period)
     else:
-        res = d2.ngram_book(word, ddk = ddk, topic = subject, period = period)
+        res = NGRAM(word, ddk = ddk, topic = subject, period = period)
     if sammenlign != "":
-        tot = sumword(sammenlign, ddk, subject, period=(period_slider[0], period_slider[1]))
+        tot = sumword(NGRAM, sammenlign, ddk, subject, period=(period_slider[0], period_slider[1]))
         for x in res:
             res[x] = res[x]/tot
     
@@ -54,6 +54,13 @@ sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord - sum
 allword = list(set([w.strip() for w in words.split(',')]))[:30]
 
 st.sidebar.header('Parametre fra metadata')
+texts = st.sidebar.selectbox('Bok eller tidsskrift', ['bok', 'tidsskrift'], index=0)
+
+if texts == "bok":
+    NGRAM = d2.ngram_book
+else:
+    NGRAM = d2.ngram_periodicals
+    
 st.sidebar.subheader('Dewey')
 st.sidebar.markdown("Se definisjoner av [Deweys desimalkoder](https://deweysearchno.pansoft.de/webdeweysearch/index.html).")
 
@@ -98,7 +105,7 @@ st.sidebar.header('Fordeling i bøker')
 st.sidebar.markdown("For sjekking av fordeling i bøker - sett verdien til større enn null for å sjekke")
 antall = st.sidebar.number_input("Antall bøker", 0, 100, 0)
 
-df = ngram(allword, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1]))
+df = ngram(NGRAM, allword, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1]))
 
 
 #ax = df.plot(figsize = (10,6 ), lw = 5, alpha=0.8)
