@@ -5,27 +5,27 @@ from PIL import Image
 
 
 @st.cache(suppress_st_warning=True, show_spinner = False)
-def sumword(NGRAM, words, ddk, topic, period):
+def sumword(NGRAM, words, ddk, topic, period, lang):
     wordlist =   [x.strip() for x in words.split(',')]
     # check if trailing comma, or comma in succession, if so count comma in
     if '' in wordlist:
         wordlist = [','] + [y for y in wordlist if y != '']
-    ref = NGRAM(wordlist, ddk = ddk, topic = topic, period = period).sum(axis = 1)
+    ref = NGRAM(wordlist, ddk = ddk, topic = topic, period = period, lang = lang).sum(axis = 1)
     ref.columns = 'tot'
     return ref
 
 
 @st.cache(suppress_st_warning=True, show_spinner = False)
-def ngram(NGRAM, word, ddk, subject, period):
+def ngram(NGRAM, word, ddk, subject, period, lang):
     res = pd.DataFrame()
     #if " " in word:
     #    bigram = word.split()[:2]
     #    print('bigram i kjømda')
     #    #res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, topic = subject, period = period)
     #else:
-    res = NGRAM(word, ddk = ddk, topic = subject, period = period)
+    res = NGRAM(word, ddk = ddk, topic = subject, period = period, lang = lang)
     if sammenlign != "":
-        tot = sumword(NGRAM, sammenlign, ddk, subject, period=(period_slider[0], period_slider[1]))
+        tot = sumword(NGRAM, sammenlign, ddk, subject, (period_slider[0], period_slider[1]), lang)
         for x in res:
             res[x] = res[x]/tot
     
@@ -49,10 +49,13 @@ st.sidebar.header('Input')
 words = st.text_input('Fyll inn ord eller bigram adskilt med komma. Det skilles mellom store og små bokstaver', "")
 if words == "":
     words = "helse, sykdom, virus"
+allword = list(set([w.strip() for w in words.split(',')]))[:30]
+
+lang = st.sidebar.selectbox('Målform', ['nob', 'nno'], index = 0)
 
 sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord - sum av komma og punktum er standard, som gir tilnærmet 10nde-del av inputordenes relativfrekvens", ".,")
  
-allword = list(set([w.strip() for w in words.split(',')]))[:30]
+
 
 st.sidebar.header('Parametre fra metadata')
 texts = st.sidebar.selectbox('Bok eller tidsskrift', ['bok', 'tidsskrift'], index=0)
@@ -114,7 +117,7 @@ st.sidebar.header('Fordeling i bøker')
 st.sidebar.markdown("For sjekking av fordeling i bøker - sett verdien til større enn null for å sjekke")
 antall = st.sidebar.number_input("Antall bøker", 0, 100, 0)
 
-df = ngram(NGRAM, allword, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1]))
+df = ngram(NGRAM, allword, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1]), lang = lang)
 
 
 #ax = df.plot(figsize = (10,6 ), lw = 5, alpha=0.8)
