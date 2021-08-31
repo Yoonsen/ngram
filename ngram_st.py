@@ -145,7 +145,7 @@ st.line_chart(df)
 st.markdown("## Konkordanser for __{u}__".format(u = ", ".join(allword)))
 #st.write(subject_ft, ddk_ft, doctype, period_slider, " ".join(allword))
 try:
-    samples = list(d2.document_corpus(doctype = doctype,  subject = subject_ft, ddk = ddk_ft, from_year = period_slider[0], to_year = period_slider[1], limit = 2000).urn)
+    samples = list(d2.document_corpus(doctype = doctype, title = title[1:-1]+"*", subject = subject_ft, ddk = ddk_ft, from_year = period_slider[0], to_year = period_slider[1], limit = 2000).urn)
     #st.write(samples[:10])
     st.write('\n\n'.join([' '.join(("https://urn.nb.no/" + r[1][0], r[1][1])) for r in d2.concordance(urns = samples, words =" ".join(allword))[['urn','conc']][:60].iterrows()]).replace('<b>','**').replace('</b>', '**'))
 except :
