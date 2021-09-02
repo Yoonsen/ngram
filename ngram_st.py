@@ -5,7 +5,7 @@ from PIL import Image
 
 
 @st.cache(suppress_st_warning=True, show_spinner = False)
-def sumword(NGRAM, words, ddk, topic, period, lang, title):
+def sumword(NGRAM, words = None, ddk = None, topic = None, period = None, lang = None, title = None):
     wordlist =   [x.strip() for x in words.split(',')]
     # check if trailing comma, or comma in succession, if so count comma in
     if '' in wordlist:
@@ -16,20 +16,9 @@ def sumword(NGRAM, words, ddk, topic, period, lang, title):
 
 
 @st.cache(suppress_st_warning=True, show_spinner = False)
-def ngram(NGRAM, word, ddk, subject, period, lang, title):
-    res = pd.DataFrame()
-    #if " " in word:
-    #    bigram = word.split()[:2]
-    #    print('bigram i kjømda')
-    #    #res = nb.bigram(first = bigram [0], second = bigram [1], ddk = ddk, topic = subject, period = period)
-    #else:
+def ngram(NGRAM, word = None, ddk = None, subject = None, period = None, lang = None, title = None):
     res = NGRAM(word, ddk = ddk, topic = subject, period = period, lang = lang, title = title)
-    if sammenlign != "":
-        tot = sumword(NGRAM, sammenlign, ddk, subject, (period_slider[0], period_slider[1]), lang, title)
-        for x in res:
-            res[x] = res[x]/tot
-    
-    res = res.rolling(window= smooth_slider).mean()
+    res = res.rolling(window = smooth_slider).mean()
     res.index = pd.to_datetime(res.index, format='%Y')
     return res
 
@@ -72,9 +61,12 @@ st.sidebar.subheader('Tittel')
 title = st.sidebar.text_input("Angi en del eller hele tittelen på boka eller tidsskriftet", "")
 if title == "":
     title = None
+    title_ft = None
 else:
-    title = "%" + title + "%" 
-
+    title = "%" + "%".join(title.split()) + "%" 
+    title_ft = title.replace("%", " ")
+    st.write(title.split())
+    
 st.sidebar.subheader('Dewey')
 st.sidebar.markdown("Se definisjoner av [Deweys desimalkoder](https://deweysearchno.pansoft.de/webdeweysearch/index.html).")
 
@@ -125,28 +117,26 @@ st.sidebar.header('Fordeling i bøker')
 st.sidebar.markdown("For sjekking av fordeling i bøker - sett verdien til større enn null for å sjekke")
 antall = st.sidebar.number_input("Antall bøker", 0, 100, 0)
 
-df = ngram(NGRAM, allword, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1]), lang = lang, title = title)
+st.write( doctype, ddk, title, subject, ddk_ft, title_ft, subject_ft)
 
+try:
+    df = ngram(NGRAM, allword, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1]), lang = lang, title = title)
+except:
+    df = pd.DataFrame()
+    
+if sammenlign != "":
+    tot = sumword(NGRAM, sammenlign, ddk, subject, (period_slider[0], period_slider[1]), lang, title)
+else:
+    tot = 1
 
-#ax = df.plot(figsize = (10,6 ), lw = 5, alpha=0.8)
-#ax.spines["top"].set_visible(False)
-#ax.spines["right"].set_visible(False)
+st.line_chart(df.div(tot, axis = 0))
 
-#ax.spines["bottom"].set_color("grey")
-#ax.spines["left"].set_color("grey")
-#ax.spines["bottom"].set_linewidth(3)
-#ax.spines["left"].set_linewidth(3)
-#ax.legend(loc='upper left', frameon=False)
-#ax.spines["left"].set_visible(False)
-#st.pyplot()
-st.line_chart(df)
 
 #st.line_chart(tot)
 st.markdown("## Konkordanser for __{u}__".format(u = ", ".join(allword)))
 #st.write(subject_ft, ddk_ft, doctype, period_slider, " ".join(allword))
-try:
-    samples = list(d2.document_corpus(doctype = doctype, title = title[1:-1]+"*", subject = subject_ft, ddk = ddk_ft, from_year = period_slider[0], to_year = period_slider[1], limit = 2000).urn)
-    #st.write(samples[:10])
-    st.write('\n\n'.join([' '.join(("https://urn.nb.no/" + r[1][0], r[1][1])) for r in d2.concordance(urns = samples, words =" ".join(allword))[['urn','conc']][:60].iterrows()]).replace('<b>','**').replace('</b>', '**'))
-except :
-    st.write('... ingen konkordanser ...')
+
+samples = list(d2.document_corpus(doctype = doctype, title = title_ft, subject = subject_ft, ddk = ddk_ft, from_year = period_slider[0], to_year = period_slider[1], limit = 2000).urn)
+#st.write(samples[:10])
+st.write('\n\n'.join([' '.join(("https://urn.nb.no/" + r[1][0], r[1][1])) for r in d2.concordance(urns = samples, words =" ".join(allword))[['urn','conc']][:60].iterrows()]).replace('<b>','**').replace('</b>', '**'))
+#    st.write('... ingen konkordanser ...')
