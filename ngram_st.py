@@ -97,8 +97,8 @@ elif not "%" in subject:
 st.sidebar.subheader('Tidsperiode')
 
 period_slider = st.sidebar.slider(
-    'Angi periode - år mellom 1900 og 2014',
-    1900, 2020, (1950, 2010)
+    'Angi periode i år',
+    1900, 2020, (1950, 2021)
 )
 
 # wrapper for nb.frame() check if dataframe is empty before assigning names to columns
