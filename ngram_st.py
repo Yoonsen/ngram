@@ -42,7 +42,7 @@ allword = list(set([w.strip() for w in words.split(',')]))[:30]
 
 lang = st.sidebar.selectbox('Målform', ['nob', 'nno'], index = 0)
 
-sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord - sum av komma og punktum er standard, som gir tilnærmet 10nde-del av inputordenes relativfrekvens", ".,")
+sammenlign = st.sidebar.text_input("Sammenling med summen av følgende ord - sum av komma og punktum er standard", ".,")
  
 
 
@@ -65,7 +65,7 @@ if title == "":
 else:
     title = "%" + "%".join(title.split()) + "%" 
     title_ft = title.replace("%", " ")
-    st.write(title.split())
+    #st.write(title.split())
     
 st.sidebar.subheader('Dewey')
 st.sidebar.markdown("Se definisjoner av [Deweys desimalkoder](https://deweysearchno.pansoft.de/webdeweysearch/index.html).")
@@ -117,7 +117,7 @@ st.sidebar.header('Fordeling i bøker')
 st.sidebar.markdown("For sjekking av fordeling i bøker - sett verdien til større enn null for å sjekke")
 antall = st.sidebar.number_input("Antall bøker", 0, 100, 0)
 
-st.write( doctype, ddk, title, subject, ddk_ft, title_ft, subject_ft)
+#  st.write( doctype, ddk, title, subject, ddk_ft, title_ft, subject_ft)
 
 try:
     df = ngram(NGRAM, allword, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1]), lang = lang, title = title)
@@ -133,10 +133,15 @@ st.line_chart(df.div(tot, axis = 0))
 
 
 #st.line_chart(tot)
+
 st.markdown("## Konkordanser for __{u}__".format(u = ", ".join(allword)))
+
 #st.write(subject_ft, ddk_ft, doctype, period_slider, " ".join(allword))
 
 samples = list(d2.document_corpus(doctype = doctype, title = title_ft, subject = subject_ft, ddk = ddk_ft, from_year = period_slider[0], to_year = period_slider[1], limit = 2000).urn)
-#st.write(samples[:10])
+
+# st.write(samples[:10])
+
 st.write('\n\n'.join([' '.join(("https://urn.nb.no/" + r[1][0], r[1][1])) for r in d2.concordance(urns = samples, words =" ".join(allword))[['urn','conc']][:60].iterrows()]).replace('<b>','**').replace('</b>', '**'))
+
 #    st.write('... ingen konkordanser ...')
