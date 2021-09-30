@@ -117,8 +117,6 @@ def frm(x, y):
 st.sidebar.header('Visning')
 smooth_slider = st.sidebar.slider('Glatting', 1, 8, 3)
 
-st.sidebar.header('Fordeling i bøker')
-#antall = st.sidebar.number_input( "For sjekking av fordeling i bøker - jo fler jo lenger ventetid, forskjellige søk vil vanligvis gi nye bøker", 10)
 
 try:
     df = ngram(NGRAM, allword, ddk = ddk, subject = subject, period = (period_slider[0], period_slider[1]), lang = lang, title = title)
