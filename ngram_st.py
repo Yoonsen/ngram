@@ -41,8 +41,7 @@ st.markdown('### Trendlinjer')
 
 st.sidebar.header('Input')
 words = st.text_input('Fyll inn ord eller bigram adskilt med komma. Det skilles mellom store og små bokstaver', "")
-if words == "":
-    words = "helse, sykdom, virus"
+
 allword = list(set([w.strip() for w in words.split(',')]))[:30]
 
 lang = st.sidebar.selectbox('Målform', ['nob', 'nno'], index = 0)
