@@ -103,7 +103,7 @@ st.sidebar.subheader('Tidsperiode')
 
 period_slider = st.sidebar.slider(
     'Angi periode i år',
-    1900, 2020, (1950, 2021)
+    1900, 2021, (1950, 2020)
 )
 
 # wrapper for nb.frame() check if dataframe is empty before assigning names to columns
