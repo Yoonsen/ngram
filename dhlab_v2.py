@@ -66,19 +66,25 @@ def ngram_news(word = ['.'], title = None, period = None):
     #df.index = df.index.map(pd.Timestamp)
     return df
 
+def frequencies(urns = None, cutoff = 0):
+    params = locals()
+    r = requests.post(BASE_URL1 + "/frequencies", json = params)
+    result = r.json()
+    structure = {u[0][0] : dict([tuple(x[1:]) for x in u]) for u in result if u != []}
+    return structure
 
-def document_corpus(doctype = None, author = None,  from_year = None, to_year = None, title = None, ddk = None, subject = None, lang = None, limit = None):
+
+def document_corpus(doctype = None, author = None,  from_year = None, to_year = None, from_timestamp = None, to_timestamp = None, title = None, ddk = None, subject = None, lang = None, limit = None):
     """ Fetch a corpus based on metadata - doctypes are digibok, digavis, digitidsskrift"""
     
     parms = locals()
     params = {x:parms[x] for x in parms if not parms[x] is None }
-    
     if "ddk" in params:
         params["ddk"]  = params['ddk'].replace('.', '"."')
         
     r=requests.post(BASE_URL + "/build_corpus", json=params)
     
-    return pd.DataFrame(r.json(), columns = ['urn', 'author', 'title','year'])
+    return pd.DataFrame(r.json())
     
 def urn_collocation(urns = None, word = 'arbeid', before = 5, after = 0, samplesize = 200000):
     """ Create a collocation from a list of URNs - returns distance (sum of distances and bayesian distance) and frequency"""
@@ -111,7 +117,21 @@ def concordance(urns = None, words = None, window = 25, limit = 100):
         }
         r = requests.post(BASE_URL + "/conc", json = params)
     return pd.DataFrame(r.json())
-    
+
+def concordance_counts(urns = None, words = None, window = 25, limit = 100):
+    """ Get a list of concordances from database, words is an fts5 string search expression"""
+    if words is None:
+        return {}
+    else:
+        params = {
+            'urns': urns,
+            'query': words,
+            'window': window,
+            'limit': limit
+        }
+        r = requests.post(BASE_URL + "/conccount", json = params)
+    return pd.DataFrame(r.json())
+
 def konkordans(urns = None, query = None, window = 25, limit = 100):
     if query is None:
         return {}
