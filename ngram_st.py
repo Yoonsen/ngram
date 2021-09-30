@@ -152,5 +152,3 @@ samples = d2.document_corpus(doctype = doctype, title = title_ft, subject = subj
 conc = konk(corpus = samples, query = ' '.join(allword))
 st.write('\n\n'.join([' '.join((r[1][0], r[1][1], r[1][2])) for r in conc.sample(min(200, len(conc))).iterrows()]).replace('<b>','**').replace('</b>', '**'))
 
-
-#st.write(conc.sample(min(200, len(conc))).to_markdown())
