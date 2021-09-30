@@ -26,7 +26,7 @@ def ngram(NGRAM, word = None, ddk = None, subject = None, period = None, lang = 
 def konk(corpus = None, query = None): 
     conc = d2.concordance(urns = list(corpus.urn), words = query, limit = 10000)
     conc['link'] = conc['urn'].apply(lambda c: "[{display}](https://www.nb.no/items/{x}?searchText={q})".format(x = c, display = c.split('_')[2], q = query))
-    conc['date'] = conc['urn'].apply(lambda c: "{display}".format( display = c.split('_')[-1][:4]))
+    conc['date'] = conc['urn'].apply(lambda c: "{display}".format( display = c.split('_')[2][:4]))
     return conc[['link','date','conc']].sort_values(by = 'date')
 
 image = Image.open('NB-logo-no-eng-svart.png')
@@ -138,15 +138,7 @@ st.markdown("## Konkordanser for __{u}__".format(u = ", ".join(allword)))
 #st.write(subject_ft, ddk_ft, doctype, period_slider, " ".join(allword))
 
 samples = d2.document_corpus(doctype = doctype, title = title_ft, subject = subject_ft, ddk = ddk_ft, from_year = period_slider[0], to_year = period_slider[1], limit = 2000)
-
-# st.write(samples[:10])
-
-#st.write('\n\n'.join([' '.join(("https://urn.nb.no/" + r[1][0], r[1][1])) for r in d2.concordance(urns = samples, words =" ".join(allword))[['urn','conc']][:60].iterrows()]).replace('<b>','**').replace('</b>', '**'))
-
-#    st.write('... ingen konkordanser ...')
-
-# st.write(samples[:10])
-
 conc = konk(corpus = samples, query = ' '.join(allword))
+
 st.write('\n\n'.join([' '.join((r[1][0], r[1][1], r[1][2])) for r in conc.sample(min(200, len(conc))).iterrows()]).replace('<b>','**').replace('</b>', '**'))
 
